@@ -9,6 +9,8 @@ paths:
   /login:
     post:
       summary: User login to obtain verification
+      tags:
+        - Login
       description: Authenticate users with their email and password using the external Authenticator API.
       operationId: authentication.User_Authentication
       requestBody:
@@ -49,6 +51,8 @@ paths:
   /users:
     get:
       summary: Retrieve all users
+      tags:
+        - Users
       operationId: api.user.get_users
       responses:
         "200":
@@ -66,10 +70,11 @@ paths:
                       type: string
                     User_Role:
                       type: string
-
   /trails:
     get:
       summary: Retrieve all trails
+      tags:
+        - Trails
       operationId: api.trail.get_trails
       responses:
         "200":
@@ -101,3 +106,147 @@ paths:
                       type: string
                     Trail_OwnerID:
                       type: integer
+    post:
+      summary: Create a new trail
+      tags:
+        - Trails
+      operationId: api.trail.create_trail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Trail_Name:
+                  type: string
+                Trail_Summary:
+                  type: string
+                Trail_Description:
+                  type: string
+                Trail_Difficulty:
+                  type: string
+                  enum: [Easy, Moderate, Hard]
+                Trail_Location:
+                  type: string
+                Trail_Length:
+                  type: number
+                Trail_Elevation_Gain:
+                  type: number
+                Trail_Route_Type:
+                  type: string
+                  enum: [Circular, Out-and-back, Point-to-point]
+                Trail_OwnerID:
+                  type: integer
+              required:
+                - Trail_Name
+                - Trail_Summary
+                - Trail_Difficulty
+                - Trail_Location
+                - Trail_Length
+                - Trail_OwnerID
+      responses:
+        "201":
+          description: Trail created successfully
+        "400":
+          description: Missing required fields
+
+  /trails/{trail_id}:
+    get:
+      summary: Retrieve a trail by ID
+      tags:
+        - Trails
+      operationId: api.trail.get_trail_by_id
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A single trail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TrailID:
+                    type: integer
+                  Trail_Name:
+                    type: string
+                  Trail_Summary:
+                    type: string
+                  Trail_Description:
+                    type: string
+                  Trail_Difficulty:
+                    type: string
+                  Trail_Location:
+                    type: string
+                  Trail_Length:
+                    type: number
+                  Trail_Elevation_Gain:
+                    type: number
+                  Trail_Route_Type:
+                    type: string
+                  Trail_OwnerID:
+                    type: integer
+        "404":
+          description: Trail not found
+    put:
+      summary: Update a trail by ID
+      tags:
+        - Trails
+      operationId: api.trail.update_trail
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Trail_Name:
+                  type: string
+                Trail_Summary:
+                  type: string
+                Trail_Description:
+                  type: string
+                Trail_Difficulty:
+                  type: string
+                Trail_Location:
+                  type: string
+                Trail_Length:
+                  type: number
+                Trail_Elevation_Gain:
+                  type: number
+                Trail_Route_Type:
+                  type: string
+                Trail_OwnerID:
+                  type: integer
+      responses:
+        "200":
+          description: Trail updated successfully
+        "404":
+          description: Trail not found
+    delete:
+      summary: Delete a trail by ID
+      tags:
+        - Trails
+      operationId: api.trail.delete_trail
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Trail deleted successfully
+        "404":
+          description: Trail not found

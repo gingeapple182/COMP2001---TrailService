@@ -1,9 +1,9 @@
 import connexion
 from flask import Flask
 from api.user import get_users
-from api.trail import get_trails
+from api.trail import get_trails, get_trail_by_id, create_trail, update_trail, delete_trail
 from api.location_point import get_location_points
-from authentication import User_Authentication#, Bearer_Token_Verification
+from authentication import User_Authentication
 from models import Database, TrailUser
 
 # Database configuration
@@ -30,17 +30,19 @@ Flask_App = Connexion_App.app
 Flask_App.config['SQLALCHEMY_DATABASE_URI'] = Connexion_String
 Flask_App.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# swagger functions
 Flask_App.add_url_rule("/login", view_func=User_Authentication, methods=["POST"])
+
+# trail CRUD functions
+Flask_App.add_url_rule("/trails", view_func=create_trail, methods=["POST"])
+Flask_App.add_url_rule("/trails", view_func=get_trails, methods=["GET"])
+Flask_App.add_url_rule("/trails/<int:trail_id>", view_func=get_trail_by_id, methods=["GET"])
+Flask_App.add_url_rule("/trails/<int:trail_id>", view_func=update_trail, methods=["PUT"])
+Flask_App.add_url_rule("/trails/<int:trail_id>", view_func=delete_trail, methods=["DELETE"])
 
 # Initialize database
 Database.init_app(Flask_App)
 
-# Add API with Swagger
-#Connexion_App.add_api("swagger.yml", options={"swagger_ui": True}, arguments={"bearerInfoFunc": Bearer_Token_Verification})
-
-# from authentication import User_Authentication, Bearer_Token_Verification
-
-# Temporarily remove Bearer_Token_Verification from add_api
 Connexion_App.add_api("swagger.yml", options={"swagger_ui": True})  # Removed arguments={"bearerInfoFunc": Bearer_Token_Verification}
 
 if __name__ == "__main__":

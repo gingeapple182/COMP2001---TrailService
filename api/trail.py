@@ -1,6 +1,7 @@
 from flask import request, Response
 import json
 from models import Trail, LocationPoint, TrailLocationPoint, Database
+from authentication import get_user_role
 
 # get all trails
 def get_trails():
@@ -46,6 +47,11 @@ def get_trail_by_id(trail_id):
 
 # get detailed information of a specific trail by ID
 def get_trail_details(trail_id):
+    # check admin or user
+    user_role = get_user_role(request)
+    if user_role == None:
+        return Response(json.dumps({"error": "You must login to view detailed trail information."}), status=403, mimetype="application/json")
+
     trail = Trail.query.get(trail_id)
     if not trail:
         return Response(json.dumps({"error": "Trail not found"}), status=404, mimetype="application/json")
@@ -87,6 +93,11 @@ def get_trail_details(trail_id):
 
 # create new trail
 def create_trail():
+    # check admin or user
+    user_role = get_user_role(request)
+    if user_role != "Admin":
+        return Response(json.dumps({"error": "You do not have permission to create trails."}), status=403, mimetype="application/json")
+
     data = request.get_json()
     required_fields = ["Trail_Name", "Trail_Summary", "Trail_Difficulty", "Trail_Location", "Trail_Length", "Trail_OwnerID"]
     for field in required_fields:
@@ -113,6 +124,11 @@ def create_trail():
 
 # update existing trail
 def update_trail(trail_id):
+    # check admin or user
+    user_role = get_user_role(request)
+    if user_role != "Admin":
+        return Response(json.dumps({"error": "You do not have permission to update trails."}), status=403, mimetype="application/json")
+
     data = request.get_json()
     trail = Trail.query.get(trail_id)
     
@@ -129,6 +145,11 @@ def update_trail(trail_id):
 
 # delete trail
 def delete_trail(trail_id):
+    # check admin or user
+    user_role = get_user_role(request)
+    if user_role != "Admin":
+        return Response(json.dumps({"error": "You do not have permission to delete trails."}), status=403, mimetype="application/json")
+
     trail = Trail.query.get(trail_id)
     
     if not trail:

@@ -1,4 +1,5 @@
 import connexion
+import secrets
 from flask import Flask
 from api.user import get_users
 from api.trail import get_trails, get_trail_by_id, get_trail_details, create_trail, update_trail, delete_trail
@@ -25,6 +26,9 @@ Connexion_String = (
 # Initialize Connexion app
 Connexion_App = connexion.App(__name__, specification_dir="./")
 Flask_App = Connexion_App.app
+
+# secret key
+Flask_App.secret_key = "shh_its_a_secret"
 
 # Configure SQLAlchemy
 Flask_App.config['SQLALCHEMY_DATABASE_URI'] = Connexion_String

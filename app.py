@@ -1,7 +1,7 @@
 import connexion
 from flask import Flask
 from api.user import get_users
-from api.trail import get_trails, get_trail_by_id, create_trail, update_trail, delete_trail
+from api.trail import get_trails, get_trail_by_id, get_trail_details, create_trail, update_trail, delete_trail
 from api.location_point import get_location_points, get_location_point_by_id, create_location_point, update_location_point, delete_location_point
 from authentication import User_Authentication
 from models import Database, TrailUser
@@ -39,6 +39,7 @@ Flask_App.add_url_rule("/trails", view_func=get_trails, methods=["GET"])
 Flask_App.add_url_rule("/trails/<int:trail_id>", view_func=get_trail_by_id, methods=["GET"])
 Flask_App.add_url_rule("/trails/<int:trail_id>", view_func=update_trail, methods=["PUT"])
 Flask_App.add_url_rule("/trails/<int:trail_id>", view_func=delete_trail, methods=["DELETE"])
+Flask_App.add_url_rule("/trails/<int:trail_id>/details", view_func=get_trail_details, methods=["GET"])
 
 # location point CRUD functions
 Flask_App.add_url_rule("/location_points", view_func=create_location_point, methods=["POST"])

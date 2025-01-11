@@ -36,3 +36,12 @@ class LocationPoint(Database.Model):
     Latitude = Database.Column(Database.Float, nullable=False)
     Longitude = Database.Column(Database.Float, nullable=False)
     Location_Description = Database.Column(Database.String(255))
+
+class TrailLocationPoint(Database.Model):
+    __tablename__ = "Trail_Location_Point"
+    __table_args__ = {"schema": "CW2"}
+
+    TrailID = Database.Column(Database.Integer, Database.ForeignKey("CW2.Trail.TrailID"), primary_key=True)
+    Location_Point = Database.Column(Database.Integer, Database.ForeignKey("CW2.Location_Point.LocationID"), primary_key=True)
+    Order = Database.Column(Database.Integer, nullable=False)
+

@@ -1,10 +1,11 @@
-from flask import request, jsonify
-from models import Trail, Database
+from flask import request, Response
+import json
+from models import Trail, LocationPoint, TrailLocationPoint, Database
 
 # get all trails
 def get_trails():
     trails = Trail.query.all()
-    return jsonify([
+    response_data = [
         {
             "TrailID": trail.TrailID,
             "Trail_Name": trail.Trail_Name,
@@ -18,15 +19,17 @@ def get_trails():
             "Trail_OwnerID": trail.Trail_OwnerID
         }
         for trail in trails
-    ]), 200
+    ]
+    return Response(json.dumps(response_data), status=200, mimetype="application/json")
+
 
 # get a specific trail by ID
 def get_trail_by_id(trail_id):
     trail = Trail.query.get(trail_id)
     if not trail:
-        return jsonify({"error": "Trail not found"}), 404
+        return Response(json.dumps({"error": "Trail not found"}), status=404, mimetype="application/json")
     
-    return jsonify({
+    response_data = {
         "TrailID": trail.TrailID,
         "Trail_Name": trail.Trail_Name,
         "Trail_Summary": trail.Trail_Summary,
@@ -37,7 +40,50 @@ def get_trail_by_id(trail_id):
         "Trail_Elevation_Gain": trail.Trail_Elevation_Gain,
         "Trail_Route_Type": trail.Trail_Route_Type,
         "Trail_OwnerID": trail.Trail_OwnerID
-    }), 200
+    }
+    return Response(json.dumps(response_data), status=200, mimetype="application/json")
+
+
+# get detailed information of a specific trail by ID
+def get_trail_details(trail_id):
+    trail = Trail.query.get(trail_id)
+    if not trail:
+        return Response(json.dumps({"error": "Trail not found"}), status=404, mimetype="application/json")
+
+    location_points = (
+        Database.session.query(LocationPoint)
+        .join(TrailLocationPoint, TrailLocationPoint.Location_Point == LocationPoint.LocationID)
+        .filter(TrailLocationPoint.TrailID == trail_id)
+        .order_by(TrailLocationPoint.Order)
+        .all()
+    )
+
+    location_points_data = [
+        {
+            "LocationID": point.LocationID,
+            "Latitude": point.Latitude,
+            "Longitude": point.Longitude,
+            "Location_Description": point.Location_Description
+        }
+        for point in location_points
+    ]
+
+    response_data = {
+        "TrailID": trail.TrailID,
+        "Trail_Name": trail.Trail_Name,
+        "Trail_Summary": trail.Trail_Summary,
+        "Trail_Description": trail.Trail_Description,
+        "Trail_Difficulty": trail.Trail_Difficulty,
+        "Trail_Location": trail.Trail_Location,
+        "Trail_Length": trail.Trail_Length,
+        "Trail_Elevation_Gain": trail.Trail_Elevation_Gain,
+        "Trail_Route_Type": trail.Trail_Route_Type,
+        "Trail_OwnerID": trail.Trail_OwnerID,
+        "Location_Points": location_points_data
+    }
+
+    return Response(json.dumps(response_data), status=200, mimetype="application/json")
+
 
 # create new trail
 def create_trail():
@@ -45,7 +91,7 @@ def create_trail():
     required_fields = ["Trail_Name", "Trail_Summary", "Trail_Difficulty", "Trail_Location", "Trail_Length", "Trail_OwnerID"]
     for field in required_fields:
         if field not in data:
-            return jsonify({"error": f"{field} is required"}), 400
+            return Response(json.dumps({"error": f"{field} is required"}), status=400, mimetype="application/json")
 
     new_trail = Trail(
         Trail_Name=data["Trail_Name"],
@@ -62,7 +108,8 @@ def create_trail():
     Database.session.add(new_trail)
     Database.session.commit()
     
-    return jsonify({"message": "Trail created successfully"}), 201
+    return Response(json.dumps({"message": "Trail created successfully"}), status=201, mimetype="application/json")
+
 
 # update existing trail
 def update_trail(trail_id):
@@ -70,22 +117,23 @@ def update_trail(trail_id):
     trail = Trail.query.get(trail_id)
     
     if not trail:
-        return jsonify({"error": "Trail not found"}), 404
+        return Response(json.dumps({"error": "Trail not found"}), status=404, mimetype="application/json")
     
     for key in data:
         if hasattr(trail, key):
             setattr(trail, key, data[key])
     
     Database.session.commit()
-    return jsonify({"message": "Trail updated successfully"}), 200
+    return Response(json.dumps({"message": "Trail updated successfully"}), status=200, mimetype="application/json")
+
 
 # delete trail
 def delete_trail(trail_id):
     trail = Trail.query.get(trail_id)
     
     if not trail:
-        return jsonify({"error": "Trail not found"}), 404
+        return Response(json.dumps({"error": "Trail not found"}), status=404, mimetype="application/json")
     
     Database.session.delete(trail)
     Database.session.commit()
-    return jsonify({"message": "Trail deleted successfully"}), 204
+    return Response(json.dumps({"message": "Trail deleted successfully"}), status=204, mimetype="application/json")

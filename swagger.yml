@@ -153,7 +153,7 @@ paths:
           description: Missing required fields
   /trails/{trail_id}:
     get:
-      summary: Retrieve a trail by ID
+      summary: Retrieve basic information for a specific trail
       tags:
         - Trails
       operationId: api.trail.get_trail_by_id
@@ -163,9 +163,10 @@ paths:
           required: true
           schema:
             type: integer
+          description: The ID of the trail to retrieve details for
       responses:
         "200":
-          description: A single trail
+          description: Simple trail information
           content:
             application/json:
               schema:
@@ -248,6 +249,62 @@ paths:
       responses:
         "204":
           description: Trail deleted successfully
+        "404":
+          description: Trail not found
+  /trails/{trail_id}/details:
+    get:
+      summary: Retrieve detailed information for a specific trail
+      tags:
+        - Trails
+      operationId: api.trail.get_trail_details
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the trail to retrieve details for
+      responses:
+        "200":
+          description: Detailed trail information including location points
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TrailID:
+                    type: integer
+                  Trail_Name:
+                    type: string
+                  Trail_Summary:
+                    type: string
+                  Trail_Description:
+                    type: string
+                  Trail_Difficulty:
+                    type: string
+                  Trail_Location:
+                    type: string
+                  Trail_Length:
+                    type: number
+                  Trail_Elevation_Gain:
+                    type: number
+                  Trail_Route_Type:
+                    type: string
+                  Trail_OwnerID:
+                    type: integer
+                  Location_Points:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        LocationID:
+                          type: integer
+                        Latitude:
+                          type: number
+                        Longitude:
+                          type: number
+                        Location_Description:
+                          type: string
         "404":
           description: Trail not found
 

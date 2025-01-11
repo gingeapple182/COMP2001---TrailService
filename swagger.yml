@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Trail Management API
-  description: API for managing trails, users, and location points.
+  description: API for managing trails, their location points and users.
   version: "1.0.0"
 servers:
   - url: /api
@@ -70,6 +70,7 @@ paths:
                       type: string
                     User_Role:
                       type: string
+
   /trails:
     get:
       summary: Retrieve all trails
@@ -150,7 +151,6 @@ paths:
           description: Trail created successfully
         "400":
           description: Missing required fields
-
   /trails/{trail_id}:
     get:
       summary: Retrieve a trail by ID
@@ -250,3 +250,143 @@ paths:
           description: Trail deleted successfully
         "404":
           description: Trail not found
+
+  /location_points:
+    post:
+      summary: Add a location point
+      tags:
+        - Location points
+      operationId: api.location_point.create_location_point
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                Latitude:
+                  type: number
+                Longitude:
+                  type: number
+                Location_description:
+                  type: string
+              required:
+                - Latitude
+                - Longitude
+      responses:
+        "202":
+          description: Location point added successfully
+        "400":
+          description: Missing required fields
+    get:
+      summary: Retrieve all location points
+      tags:
+        - Location points
+      operationId: api.location_point.get_location_points
+      responses:
+        "200":
+          description: List of location points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    Location_Point:
+                      type: integer
+                    Latitude:
+                      type: number
+                    Longitude:
+                      type: number
+                    Location_Description:
+                      type: string
+        "500":
+          description: Internal server error
+
+  /location_points/{location_point_id}:
+    get:
+      summary: Retrieve a specific location point by ID
+      tags:
+        - Location points
+      operationId: api.location_point.get_location_point_by_id
+      parameters:
+        - name: location_point_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the location point to retrieve
+      responses:
+        "200":
+          description: Details of the location point
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Location_Point:
+                    type: integer
+                  Latitude:
+                    type: number
+                  Longitude:
+                    type: number
+                  Location_Description:
+                    type: string
+        "404":
+          description: Location point not found
+        "500":
+          description: Internal server error
+    put:
+      summary: Update an existing location point
+      tags:
+        - Location points
+      operationId: api.location_point.update_location_point
+      parameters:
+        - name: location_point_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the location point to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                Latitude:
+                  type: number
+                Longitude:
+                  type: number
+                Location_Description:
+                  type: string
+      responses:
+        "200":
+          description: Location point updated successfully
+        "404":
+          description: Location point not found
+        "400":
+          description: Invalid input
+        "500":
+          description: Internal server error
+    delete:
+      summary: Delete a location point
+      tags:
+        - Location points
+      operationId: api.location_point.delete_location_point
+      parameters:
+        - name: location_point_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the location point to delete
+      responses:
+        "204":
+          description: Location point deleted successfully
+        "404":
+          description: Location point not found
+        "500":
+          description: Internal server error

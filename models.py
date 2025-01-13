@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
 
 Database = SQLAlchemy()
 
@@ -45,3 +46,21 @@ class TrailLocationPoint(Database.Model):
     Location_Point = Database.Column(Database.Integer, Database.ForeignKey("CW2.Location_Point.LocationID"), primary_key=True)
     Order = Database.Column(Database.Integer, nullable=False)
 
+class Tag(Database.Model):
+    __tablename__ = "Tag"
+    __table_args__ = (
+        CheckConstraint("Tag_Type IN ('Trail Info', 'Features', 'Activities')", name="chk_tag_type"),
+        {"schema": "CW2"}
+    )
+
+    TagID = Database.Column(Database.Integer, primary_key=True, autoincrement=True)
+    Tag_Name = Database.Column(Database.String(100), nullable=False)
+    Tag_Type = Database.Column(Database.String(20), nullable=False)
+
+
+class TrailTag(Database.Model):
+    __tablename__ = "Trail_Tag"
+    __table_args__ = {"schema": "CW2"}
+
+    TrailID = Database.Column(Database.Integer, Database.ForeignKey("CW2.Trail.TrailID"), primary_key=True)
+    TagID = Database.Column(Database.Integer, Database.ForeignKey("CW2.Tag.TagID"), primary_key=True)

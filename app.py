@@ -4,6 +4,7 @@ from flask import Flask
 from api.user import get_users
 from api.trail import get_trails, get_trail_by_id, get_trail_details, create_trail, update_trail, delete_trail
 from api.location_point import get_location_points, get_location_point_by_id, create_location_point, update_location_point, delete_location_point
+from api.tag import get_tags, create_tag, update_tag, delete_tag
 from authentication import User_Authentication
 from models import Database, TrailUser
 
@@ -52,10 +53,16 @@ Flask_App.add_url_rule("/location_points/<int:location_point_id>", view_func=get
 Flask_App.add_url_rule("/location_points/<int:location_point_id>", view_func=update_location_point, methods=["PUT"])
 Flask_App.add_url_rule("/location_points/<int:location_point_id>", view_func=delete_location_point, methods=["DELETE"])
 
+# Tags CRUD functions
+Flask_App.add_url_rule("/tags", view_func=create_tag, methods=["POST"])
+Flask_App.add_url_rule("/tags", view_func=get_tags, methods=["GET"])
+Flask_App.add_url_rule("/tags/<int:tag_id>", view_func=update_tag, methods=["PUT"])
+Flask_App.add_url_rule("/tags/<int:tag_id>", view_func=delete_tag, methods=["DELETE"])
+
 # Initialize database
 Database.init_app(Flask_App)
 
-Connexion_App.add_api("swagger.yml", options={"swagger_ui": True})  # Removed arguments={"bearerInfoFunc": Bearer_Token_Verification}
+Connexion_App.add_api("swagger.yml", options={"swagger_ui": True})
 
 if __name__ == "__main__":
     with Flask_App.app_context():

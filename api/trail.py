@@ -1,6 +1,6 @@
 from flask import request, Response
 import json
-from models import Trail, LocationPoint, TrailLocationPoint, Database
+from models import Trail, LocationPoint, TrailLocationPoint, Tag, TrailTag, Database
 from authentication import get_user_role
 
 # get all trails
@@ -30,6 +30,21 @@ def get_trail_by_id(trail_id):
     if not trail:
         return Response(json.dumps({"error": "Trail not found"}), status=404, mimetype="application/json")
     
+    tags = (
+        Database.session.query(Tag)
+        .join(TrailTag, TrailTag.TagID == Tag.TagID)
+        .filter(TrailTag.TrailID == trail_id)
+        .all()
+    )
+
+    tags_data = [
+        {
+            "TagID": tag.TagID,
+            "Tag_Name": tag.Tag_Name,
+            "Tag_Type": tag.Tag_Type
+        }
+        for tag in tags
+    ]
     response_data = {
         "TrailID": trail.TrailID,
         "Trail_Name": trail.Trail_Name,
@@ -40,7 +55,8 @@ def get_trail_by_id(trail_id):
         "Trail_Length": trail.Trail_Length,
         "Trail_Elevation_Gain": trail.Trail_Elevation_Gain,
         "Trail_Route_Type": trail.Trail_Route_Type,
-        "Trail_OwnerID": trail.Trail_OwnerID
+        "Trail_OwnerID": trail.Trail_OwnerID,
+        "Tags": tags_data
     }
     return Response(json.dumps(response_data), status=200, mimetype="application/json")
 

@@ -10,7 +10,7 @@ paths:
     post:
       summary: User login to obtain verification
       tags:
-        - Login
+        - Authentication
       description: Authenticate users with their email and password using the external Authenticator API.
       operationId: authentication.User_Authentication
       requestBody:
@@ -153,7 +153,7 @@ paths:
           description: Missing required fields
   /trails/{trail_id}:
     get:
-      summary: Retrieve basic information for a specific trail
+      summary: Retrieve a trail by ID with tags
       tags:
         - Trails
       operationId: api.trail.get_trail_by_id
@@ -163,10 +163,9 @@ paths:
           required: true
           schema:
             type: integer
-          description: The ID of the trail to retrieve details for
       responses:
         "200":
-          description: Simple trail information
+          description: Trail details with tags
           content:
             application/json:
               schema:
@@ -192,6 +191,17 @@ paths:
                     type: string
                   Trail_OwnerID:
                     type: integer
+                  Tags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        TagID:
+                          type: integer
+                        Tag_Name:
+                          type: string
+                        Tag_Type:
+                          type: string
         "404":
           description: Trail not found
     put:
@@ -309,6 +319,31 @@ paths:
           description: Trail not found
 
   /location_points:
+    get:
+      summary: Retrieve all location points
+      tags:
+        - Location points
+      operationId: api.location_point.get_location_points
+      responses:
+        "200":
+          description: List of location points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    Location_Point:
+                      type: integer
+                    Latitude:
+                      type: number
+                    Longitude:
+                      type: number
+                    Location_Description:
+                      type: string
+        "500":
+          description: Internal server error
     post:
       summary: Add a location point
       tags:
@@ -335,32 +370,6 @@ paths:
           description: Location point added successfully
         "400":
           description: Missing required fields
-    get:
-      summary: Retrieve all location points
-      tags:
-        - Location points
-      operationId: api.location_point.get_location_points
-      responses:
-        "200":
-          description: List of location points
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    Location_Point:
-                      type: integer
-                    Latitude:
-                      type: number
-                    Longitude:
-                      type: number
-                    Location_Description:
-                      type: string
-        "500":
-          description: Internal server error
-
   /location_points/{location_point_id}:
     get:
       summary: Retrieve a specific location point by ID
@@ -422,10 +431,10 @@ paths:
       responses:
         "200":
           description: Location point updated successfully
-        "404":
-          description: Location point not found
         "400":
           description: Invalid input
+        "404":
+          description: Location point not found
         "500":
           description: Internal server error
     delete:
@@ -445,5 +454,105 @@ paths:
           description: Location point deleted successfully
         "404":
           description: Location point not found
+        "500":
+          description: Internal server error
+
+  /tags:
+    get:
+      summary: Retrieve all tags
+      tags:
+        - Tags
+      operationId: api.tag.get_tags
+      responses:
+        "200":
+          description: Successfully retrieved all tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    TagID:
+                      type: integer
+                    Tag_Name:
+                      type: string
+                    Tag_Type:
+                      type: string
+        "500":
+          description: Internal server error
+    post:
+      summary: Add a new tag
+      tags:
+        - Tags
+      operationId: api.tag.create_tag
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                Tag_Name:
+                  type: string
+                Tag_Type:
+                  type: string
+                  enum: ["Trail Info", "Features", "Activities"]
+              required: 
+                - Tag_Name
+                - Tag_Type
+      responses:
+        "202":
+          description: Tag added successfully
+        "400":
+          description: Missing required fields
+  /tags/{tag_id}:
+    put:
+      summary: Update an existing tag
+      tags:
+        - Tags
+      operationId: api.tag.update_tag
+      parameters:
+        - name: tag_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the tag to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Tag_Name:
+                  type: string
+      responses:
+        "200":
+          description: Tag updated successfully
+        "400":
+          description: Invalid input
+        "404":
+          description: Tag not found
+        "500":
+          description: Internal server error
+    delete:
+      summary: Delete a tag
+      tags:
+        - Tags
+      operationId: api.tag.delete_tag
+      parameters:
+        - name: tag_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The Id of the tag to delete
+      responses:
+        "204":
+          description: Tag deleted successfully
+        "404":
+          description: Tag not found
         "500":
           description: Internal server error

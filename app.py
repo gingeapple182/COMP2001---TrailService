@@ -5,7 +5,7 @@ from api.user import get_users
 from api.trail import get_trails, get_trail_by_id, get_trail_details, create_trail, update_trail, delete_trail
 from api.location_point import get_location_points, get_location_point_by_id, create_location_point, update_location_point, delete_location_point
 from api.tag import get_tags, create_tag, update_tag, delete_tag
-from authentication import User_Authentication
+from authentication import User_Authentication, User_Logout
 from models import Database, TrailUser
 
 # Database configuration
@@ -37,6 +37,7 @@ Flask_App.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # swagger functions
 Flask_App.add_url_rule("/login", view_func=User_Authentication, methods=["POST"])
+Flask_App.add_url_rule("/logout", view_func=User_Logout, methods=["POST"])
 
 # trail CRUD functions
 Flask_App.add_url_rule("/trails", view_func=create_trail, methods=["POST"])

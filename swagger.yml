@@ -47,6 +47,32 @@ paths:
           description: Missing email or password
         "500":
           description: Failed to authenticate with the external service
+  /logout:
+    post:
+      summary: Logout the current user
+      tags:
+        - Authentication
+      description: Logs out the currently logged-in user by clearing the session.
+      operationId: authentication.User_Logout
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: No user was logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /users:
     get:

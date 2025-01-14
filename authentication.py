@@ -1,5 +1,6 @@
 import requests
-from flask import request, jsonify, session
+import json
+from flask import request, session, Response
 from models import TrailUser, Database
 
 AUTH_API_URL = "https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users"
@@ -12,7 +13,7 @@ def User_Authentication():
     # Validate that email and password are provided
     if not data or "email" not in data or "password" not in data:
         print("Login failed: Missing email or password")
-        return jsonify({"error": "Email and password are required"}), 400
+        return Response(json.dumps({"error": "Email and password are required"}), status=400, mimetype="application/json")
     
     try:
         # Send POST request to the external Authenticator API
@@ -31,17 +32,17 @@ def User_Authentication():
             if len(result) == 2 and result[0] == "Verified" and result[1] == "True":
                 session[SESSION_KEY] = data["email"]
                 print(f"Login successful for user: {data['email']}")
-                return jsonify({"message": "Login successful", "token": data["email"]}), 200
+                return Response(json.dumps({"message": "Login successful", "token": data["email"]}), status=200, mimetype="application/json")
             else:
                 print("Login failed: Invalid credentials")
-                return jsonify({"message": "Invalid credentials", "verified": False}), 401
+                return Response(json.dumps({"message": "Invalid credentials", "verified": False}), status=401, mimetype="application/json")
         else:
             print("Login failed: External service error")
-            return jsonify({"error": "Failed to authenticate with the external service"}), 500
+            return Response(json.dumps({"error": "Failed to authenticate with the external service"}), status=500, mimetype="application/json")
 
     except Exception as e:
         print(f"Error during authentication: {e}")
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        return Response(json.dumps({"error": "An unexpected error occurred"}), status=500, mimetype="application/json")
 
 
 def get_user_role(request):
@@ -64,3 +65,10 @@ def get_user_role(request):
     except Exception as e:
         print(f"Error retrieving role: {e}")
         return None
+
+def User_Logout():
+    if "logged_in_user" in session:
+        session.pop("logged_in_user")
+        return Response(json.dumps({"message": "Logout successful"}), status=200, mimetype="application/json")
+    else:
+        return Response(json.dumps({"error": "No user logged in"}), status=400, mimetype="application/json")

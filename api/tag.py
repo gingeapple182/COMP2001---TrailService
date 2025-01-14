@@ -5,6 +5,7 @@ from authentication import get_user_role
 
 # Get all tags
 def get_tags():
+    """view all tags"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -23,6 +24,7 @@ def get_tags():
 
 # Add a new tag
 def create_tag():
+    """create new tag"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -44,6 +46,7 @@ def create_tag():
 
 # Update an existing tag
 def update_tag(tag_id):
+    """update tag"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -63,6 +66,7 @@ def update_tag(tag_id):
 
 # Delete a tag
 def delete_tag(tag_id):
+    """delete tag"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":

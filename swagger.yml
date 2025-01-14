@@ -5,6 +5,19 @@ info:
   version: "1.0.0"
 servers:
   - url: /api
+
+tags:
+  - name: Authentication
+    description: Endpoints related to user authentication
+  - name: Trails
+    description: Endpoints for managing trails
+  - name: Location points
+    description: Endpoints for managing trail location points
+  - name: Tags
+    description: Endpoints for managing tags
+  - name: Users
+    description: Endpoints for managing users
+
 paths:
   /login:
     post:
@@ -73,29 +86,6 @@ paths:
                 properties:
                   error:
                     type: string
-
-  /users:
-    get:
-      summary: Retrieve all users
-      tags:
-        - Users
-      operationId: api.user.get_users
-      responses:
-        "200":
-          description: A list of users
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    UserID:
-                      type: integer
-                    Email_Address:
-                      type: string
-                    User_Role:
-                      type: string
 
   /trails:
     get:
@@ -582,3 +572,26 @@ paths:
           description: Tag not found
         "500":
           description: Internal server error
+
+  /users:
+    get:
+      summary: Retrieve all users
+      tags:
+        - Users
+      operationId: api.user.get_users
+      responses:
+        "200":
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    UserID:
+                      type: integer
+                    Email_Address:
+                      type: string
+                    User_Role:
+                      type: string

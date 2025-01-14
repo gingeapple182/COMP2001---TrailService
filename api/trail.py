@@ -5,6 +5,7 @@ from authentication import get_user_role
 
 # get all trails
 def get_trails():
+    """retrieve all trails"""
     trails = Trail.query.all()
     response_data = [
         {
@@ -26,6 +27,7 @@ def get_trails():
 
 # get a specific trail by ID
 def get_trail_by_id(trail_id):
+    """retrieve trails by ID including tags"""
     trail = Trail.query.get(trail_id)
     if not trail:
         return Response(json.dumps({"error": "Trail not found"}), status=404, mimetype="application/json")
@@ -63,6 +65,7 @@ def get_trail_by_id(trail_id):
 
 # get detailed information of a specific trail by ID
 def get_trail_details(trail_id):
+    """retrieve trails by ID including location points"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role == None:
@@ -109,6 +112,7 @@ def get_trail_details(trail_id):
 
 # create new trail
 def create_trail():
+    """create a new trail"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -140,6 +144,7 @@ def create_trail():
 
 # update existing trail
 def update_trail(trail_id):
+    """update trail details"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -161,6 +166,7 @@ def update_trail(trail_id):
 
 # delete trail
 def delete_trail(trail_id):
+    """delete trail"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":

@@ -17,24 +17,26 @@ Database_Configuration = {
     "driver": "ODBC+Driver+17+for+SQL+Server"
 }
 
+"""generate connection string for SQLAlchemy using db config and initialise"""
 # Connection string
 Connexion_String = (
     f"mssql+pyodbc://{Database_Configuration['username']}:{Database_Configuration['password']}@"
     f"{Database_Configuration['server']}/{Database_Configuration['database']}?"
     f"driver={Database_Configuration['driver']}&TrustServerCertificate=yes&Encrypt=yes"
 )
-
 # Initialize Connexion app
 Connexion_App = connexion.App(__name__, specification_dir="./")
 Flask_App = Connexion_App.app
-
-# secret key
-Flask_App.secret_key = "shh_its_a_secret"
 
 # Configure SQLAlchemy
 Flask_App.config['SQLALCHEMY_DATABASE_URI'] = Connexion_String
 Flask_App.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# secret key 
+"""Configure secret key for database connection"""
+Flask_App.secret_key = "shh_its_a_secret"
+
+"""define routes for Auth, Trail CRUD, location point CRUD, Tag CRUD and User list"""
 # swagger functions
 Flask_App.add_url_rule("/login", view_func=User_Authentication, methods=["POST"])
 Flask_App.add_url_rule("/logout", view_func=User_Logout, methods=["POST"])
@@ -63,9 +65,11 @@ Flask_App.add_url_rule("/tags/<int:tag_id>", view_func=delete_tag, methods=["DEL
 # Initialize database
 Database.init_app(Flask_App)
 
+"""load swagger specs"""
 Connexion_App.add_api("swagger.yml", options={"swagger_ui": True})
 
+"""Run flask app on host 0.0.0.0 to allow external access on port 8000"""
 if __name__ == "__main__":
     with Flask_App.app_context():
         Database.create_all()  # Create tables if they don't exist
-    Connexion_App.run(use_reloader=True)
+    Connexion_App.run(host="0.0.0.0", port=8000, use_reloader=True)

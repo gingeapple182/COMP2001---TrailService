@@ -5,6 +5,7 @@ from authentication import get_user_role
 
 # get all location points
 def get_location_points():
+    """get all location points"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -25,6 +26,7 @@ def get_location_points():
 
 # get a specific location point by ID
 def get_location_point_by_id(location_point_id):
+    """get a specific location point by ID"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -45,6 +47,7 @@ def get_location_point_by_id(location_point_id):
 
 # add a new location point
 def create_location_point():
+    """create new location point"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -66,6 +69,7 @@ def create_location_point():
 
 # update a location point
 def update_location_point(location_point_id):
+    """update location point"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":
@@ -89,6 +93,7 @@ def update_location_point(location_point_id):
 
 # delete a location point
 def delete_location_point(location_point_id):
+    """delete location point"""
     # check admin or user
     user_role = get_user_role(request)
     if user_role != "Admin":

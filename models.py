@@ -4,6 +4,7 @@ from sqlalchemy import CheckConstraint
 Database = SQLAlchemy()
 
 class TrailUser(Database.Model):
+    """represents user roles of the application"""
     __tablename__ = "Trail_User"
     __table_args__ = {"schema": "CW2"}
 
@@ -12,6 +13,7 @@ class TrailUser(Database.Model):
     User_Role = Database.Column(Database.String(50), nullable=False)
 
 class Trail(Database.Model):
+    """represents the primary trail data"""
     __tablename__ = "Trail"
     __table_args__ = {"schema": "CW2"}
     
@@ -30,6 +32,7 @@ class Trail(Database.Model):
         nullable=False)
 
 class LocationPoint(Database.Model):
+    """represents the location point data and order"""
     __tablename__ = "Location_Point"
     __table_args__ = {"schema": "CW2"}
     
@@ -39,6 +42,7 @@ class LocationPoint(Database.Model):
     Location_Description = Database.Column(Database.String(255))
 
 class TrailLocationPoint(Database.Model):
+    """link table from Trail to Location_Point"""
     __tablename__ = "Trail_Location_Point"
     __table_args__ = {"schema": "CW2"}
 
@@ -47,6 +51,7 @@ class TrailLocationPoint(Database.Model):
     Order = Database.Column(Database.Integer, nullable=False)
 
 class Tag(Database.Model):
+    """Represents Tags and tag types"""
     __tablename__ = "Tag"
     __table_args__ = (
         CheckConstraint("Tag_Type IN ('Trail Info', 'Features', 'Activities')", name="chk_tag_type"),
@@ -59,6 +64,7 @@ class Tag(Database.Model):
 
 
 class TrailTag(Database.Model):
+    """link table from Trail to Tag"""
     __tablename__ = "Trail_Tag"
     __table_args__ = {"schema": "CW2"}
 

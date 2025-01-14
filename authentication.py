@@ -7,6 +7,10 @@ AUTH_API_URL = "https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users"
 SESSION_KEY = "logged_in_user"
 
 def User_Authentication():
+    """
+    Authenticate user using external API
+    send a POST request to validate user details
+    """
     data = request.get_json()
     print(f"Received login data: {data}")
     
@@ -46,6 +50,7 @@ def User_Authentication():
 
 
 def get_user_role(request):
+    """retrieve the role of logged in user"""
     user_email = session.get(SESSION_KEY)
 
     if not user_email:
@@ -67,6 +72,7 @@ def get_user_role(request):
         return None
 
 def User_Logout():
+    """logs out user, clears session data"""
     if "logged_in_user" in session:
         session.pop("logged_in_user")
         return Response(json.dumps({"message": "Logout successful"}), status=200, mimetype="application/json")
